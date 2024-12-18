@@ -1,0 +1,530 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dự Đoán Lương</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Tổng thể */
+        body {
+            background-color: #f0f4f8;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            scroll-behavior: smooth; /* Hiệu ứng cuộn mượt */
+        }
+
+        /* Navbar */
+        .navbar {
+            box-shadow: 0 4px 6px -6px #222;
+        }
+
+        /* Form Container */
+        .form-container {
+            margin-top: 30px;
+            padding: 20px; /* Giảm padding để làm ngắn form */
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Result Container */
+        .result-container {
+            margin-top: 20px;
+        }
+
+        /* About Section */
+        .about-section {
+            margin-top: 50px;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        /* History Container */
+        .history-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #343a40;
+            color: #ffffff;
+            padding: 20px 0;
+            margin-top: auto;
+        }
+
+        /* Custom Scrollbar (tùy chọn) */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f0f4f8;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #007bff;
+            border-radius: 4px;
+            border: 2px solid #f0f4f8;
+        }
+
+        /* Responsive Typography */
+        h1, h2 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Button Hover Effect */
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+
+        /* Link Styling */
+        .navbar-nav .nav-link {
+            transition: color 0.3s;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #ffcc00;
+        }
+
+        /* Adjust form labels and inputs for better alignment */
+        .form-label {
+            font-weight: 500;
+        }
+
+        /* Icon in Navbar */
+        .navbar-brand img {
+            width: 60px;
+            height: 60px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        /* Table Adjustments */
+        .history-container table th, .history-container table td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <!-- Flash Messages -->
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <!-- Thêm Icon vào đây -->
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135706.png" alt="Salary Icon">
+                Salary Predictor
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <!-- Menu Items -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Trang Chủ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#aboutSection">Thông Tin Đồ Án</a>
+                    </li>
+                    <!-- Thêm các mục khác nếu cần -->
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container my-5 pt-5"> <!-- pt-5 để đẩy nội dung xuống dưới Navbar -->
+        <!-- About Section Di chuyển lên đây -->
+        <section id="aboutSection" class="mb-5">
+            <div class="about-section">
+                <h2 class="mb-3 text-center">Thông Tin Đồ Án</h2>
+                <p><strong>Đồ Án Môn:</strong> Nhập Môn Khoa Học Dữ Liệu</p>
+                <p><strong>Nhóm:</strong> Nhóm 6</p>
+                <p><strong>Mục Đích:</strong> Đồ án thực hiện nhằm mục đích dự đoán lương theo các thông số như năm kinh nghiệm, ngành nghề, cấp bậc làm việc. Dữ liệu được lấy từ trang web <a href="https://careerviet.vn/" target="_blank" class="text-primary">https://careerviet.vn/</a> để phục vụ cho việc dự đoán.</p>
+            </div>
+        </section>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10"> <!-- Tăng chiều rộng của form -->
+                <div class="form-container">
+                    <h1 class="mb-4 text-center">Dự Đoán Lương Dựa Trên Các Thông Số</h1>
+                    <form id="predictionForm" action="/predict" method="POST">
+                        <!-- Numerical Inputs arranged in one row with four columns -->
+                        <div class="row mb-3">
+                            <div class="col-md-3 mb-3 mb-md-0">
+                                <label for="experience" class="form-label">Kinh Nghiệm (Năm):</label>
+                                <input type="number" class="form-control" id="experience" name="experience" required>
+                            </div>
+                            <div class="col-md-3 mb-3 mb-md-0">
+                                <label for="job_level" class="form-label">Cấp Bậc Công Việc (1-5):</label>
+                                <input type="number" class="form-control" id="job_level" name="job_level" min="1" max="5" required>
+                            </div>
+                            <div class="col-md-3 mb-3 mb-md-0">
+                                <label for="follower" class="form-label">Số Lượng Người Theo Dõi:</label>
+                                <input type="number" class="form-control" id="follower" name="follower" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="education" class="form-label">Trình Độ Học Vấn (1-5):</label>
+                                <input type="number" class="form-control" id="education" name="education" min="1" max="5" required>
+                            </div>
+                        </div>
+
+                        <!-- Dropdown for Employment Type -->
+                        <div class="mb-3">
+                            <label for="employment_type" class="form-label">Loại Hình Làm Việc:</label>
+                            <select id="employment_type" name="employment_type" class="form-select">
+                                <option value="None">Không</option>
+                                <option value="Internship">Thực Tập</option>
+                                <option value="Part-time">Bán Thời Gian</option>
+                                <option value="Official">Chính Thức</option>
+                                <option value="Freelance">Freelance</option>
+                            </select>
+                        </div>
+
+                        <!-- Multi-select for Industry -->
+                        <div class="mb-3">
+                            <label for="industry" class="form-label">Chọn Ngành Nghề:</label>
+                            <select id="industry" name="industries" class="form-select" multiple size="6">
+                                <!-- Tất cả các tùy chọn ngành -->
+                                <option value="Industry: accounting_auditing">Kế Toán & Kiểm Toán</option>
+                                <option value="Industry: administrative_secretarial">Hành Chính & Thư Ký</option>
+                                <option value="Industry: advertising_public_relations_media">Quảng Cáo, PR & Truyền Thông</option>
+                                <option value="Industry: agriculture">Nông Nghiệp</option>
+                                <option value="Industry: aquaculture_seafood">Nuôi Trồng Hải Sản</option>
+                                <option value="Industry: architecture">Kiến Trúc</option>
+                                <option value="Industry: aviation">Hàng Không</option>
+                                <option value="Industry: banking">Ngân Hàng</option>
+                                <option value="Industry: biotechnology">Công Nghệ Sinh Học</option>
+                                <option value="Industry: chemistry">Hóa Học</option>
+                                <option value="Industry: construction">Xây Dựng</option>
+                                <option value="Industry: consulting">Tư Vấn</option>
+                                <option value="Industry: customer_service">Dịch Vụ Khách Hàng</option>
+                                <option value="Industry: education_training">Giáo Dục & Đào Tạo</option>
+                                <option value="Industry: electricity_electronics_refrigeration">Điện, Điện Tử & Tản Nhiệt</option>
+                                <option value="Industry: entertainment">Giải Trí</option>
+                                <option value="Industry: environment">Môi Trường</option>
+                                <option value="Industry: event_organization">Tổ Chức Sự Kiện</option>
+                                <option value="Industry: executive_management">Quản Lý Điều Hành</option>
+                                <option value="Industry: finance_investment">Tài Chính & Đầu Tư</option>
+                                <option value="Industry: fine_arts_art_design">Nghệ Thuật & Thiết Kế</option>
+                                <option value="Industry: food_beverages">Thực Phẩm & Đồ Uống</option>
+                                <option value="Industry: food_technology_nutrition">Công Nghệ Thực Phẩm & Dinh Dưỡng</option>
+                                <option value="Industry: forestry">Lâm Nghiệp</option>
+                                <option value="Industry: healthcare_medical">Chăm Sóc Sức Khỏe & Y Tế</option>
+                                <option value="Industry: household_goods_personal_care">Hàng Hóa Gia Đình & Chăm Sóc Cá Nhân</option>
+                                <option value="Industry: human_resources">Nhân Sự</option>
+                                <option value="Industry: import_export">Nhập Khẩu & Xuất Khẩu</option>
+                                <option value="Industry: insurance">Bảo Hiểm</option>
+                                <option value="Industry: interior_exterior_design">Thiết Kế Nội Thất & Ngoại Thất</option>
+                                <option value="Industry: irrigation">Tưới Tiêu</option>
+                                <option value="Industry: it_hardware_networking">Phần Cứng IT & Mạng</option>
+                                <option value="Industry: it_software">Phần Mềm IT</option>
+                                <option value="Industry: law_legal">Luật & Pháp Lý</option>
+                                <option value="Industry: library">Thư Viện</option>
+                                <option value="Industry: livestock_veterinary">Gia Súc & Thú Y</option>
+                                <option value="Industry: maintenance_repair">Bảo Trì & Sửa Chữa</option>
+                                <option value="Industry: manual_labor">Lao Động Thủ Công</option>
+                                <option value="Industry: manufacturing_operations">Sản Xuất & Vận Hành</option>
+                                <option value="Industry: maritime">Hàng Hải</option>
+                                <option value="Industry: marketing">Tiếp Thị</option>
+                                <option value="Industry: mechanical_automotive_automation">Cơ Khí, Ô Tô & Tự Động Hóa</option>
+                                <option value="Industry: minerals">Khoáng Sản</option>
+                                <option value="Industry: new_graduates_internship">Sinh Viên & Thực Tập</option>
+                                <option value="Industry: ngo_non_profit">NGO & Phi Lợi Nhuận</option>
+                                <option value="Industry: not_found">Không Xác Định</option>
+                                <option value="Industry: occupational_safety">An Toàn Lao Động</option>
+                                <option value="Industry: oil_gas">Dầu Khí</option>
+                                <option value="Industry: online_marketing">Tiếp Thị Trực Tuyến</option>
+                                <option value="Industry: other_industries">Các Ngành Khác</option>
+                                <option value="Industry: pharmaceuticals">Dược Phẩm</option>
+                                <option value="Industry: postal_telecommunications">Bưu Chính & Viễn Thông</option>
+                                <option value="Industry: printing_publishing">In Ấn & Xuất Bản</option>
+                                <option value="Industry: procurement_supplies">Mua Sắm & Cung Ứng</option>
+                                <option value="Industry: quality_management_qaqc">Quản Lý Chất Lượng QA/QC</option>
+                                <option value="Industry: real_estate">Bất Động Sản</option>
+                                <option value="Industry: restaurant_hotel">Nhà Hàng & Khách Sạn</option>
+                                <option value="Industry: retail_wholesale">Bán Lẻ & Bán Buôn</option>
+                                <option value="Industry: sales_business">Bán Hàng & Kinh Doanh</option>
+                                <option value="Industry: securities">Chứng Khoán</option>
+                                <option value="Industry: security_protection">An Ninh & Bảo Vệ</option>
+                                <option value="Industry: statistics">Thống Kê</option>
+                                <option value="Industry: surveying_geology">Khảo Sát & Địa Học</option>
+                                <option value="Industry: television_journalism_editing">Truyền Hình, Báo Chí & Biên Tập</option>
+                                <option value="Industry: textile_leather_fashion">Dệt May, Da & Thời Trang</option>
+                                <option value="Industry: tourism">Du Lịch</option>
+                                <option value="Industry: translation_interpretation">Biên Dịch & Phiên Dịch</option>
+                                <option value="Industry: transportation_logistics_warehouse">Vận Tải, Logistics & Kho Bãi</option>
+                                <option value="Industry: wooden_goods">Hàng Gỗ</option>
+                            </select>
+                        </div>
+
+                        <!-- Multi-select for Welfare -->
+                        <div class="mb-3">
+                            <label for="welfare" class="form-label">Chọn Phúc Lợi:</label>
+                            <select id="welfare" name="welfares" class="form-select" multiple size="4">
+                                <option value="Welfare: allowance">Trợ Cấp</option>
+                                <option value="Welfare: allowance thâm niên">Trợ Cấp Thâm Niên</option>
+                                <option value="Welfare: annual_leave">Nghỉ Phép</option>
+                                <option value="Welfare: bonus">Thưởng</option>
+                                <option value="Welfare: business_trip_expenses">Chi Phí Công Tác</option>
+                                <option value="Welfare: healthcare">Chăm Sóc Sức Khỏe</option>
+                                <option value="Welfare: insurance">Bảo Hiểm</option>
+                                <option value="Welfare: laptop">Laptop</option>
+                                <option value="Welfare: not_specified">Không Được Xác Định</option>
+                                <option value="Welfare: overseas_travel">Du Lịch Nước Ngoài</option>
+                                <option value="Welfare: salary_increase">Tăng Lương</option>
+                                <option value="Welfare: shuttle_service">Dịch Vụ Đưa Đón</option>
+                                <option value="Welfare: sports_club">Câu Lạc Bộ Thể Thao</option>
+                                <option value="Welfare: training">Đào Tạo</option>
+                                <option value="Welfare: travel">Du Lịch</option>
+                                <option value="Welfare: uniform">Đồng Phục</option>
+                            </select>
+                        </div>
+
+                        <!-- Multi-select for Location -->
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Chọn Địa Điểm:</label>
+                            <select id="location" name="locations" class="form-select" multiple size="6">
+                                <!-- Tất cả các tùy chọn địa điểm -->
+                                <option value="Location_An Giang">An Giang</option>
+                                <option value="Location_Ba Ria - Vung Tau">Ba Ria - Vung Tau</option>
+                                <option value="Location_Bac Can">Bắc Cạn</option>
+                                <option value="Location_Bac Giang">Bắc Giang</option>
+                                <option value="Location_Bac Lieu">Bạc Liêu</option>
+                                <option value="Location_Bac Ninh">Bắc Ninh</option>
+                                <option value="Location_Bangkok">Bangkok</option>
+                                <option value="Location_Ben Tre">Bến Tre</option>
+                                <option value="Location_Binh Duong">Bình Dương</option>
+                                <option value="Location_Binh Phuoc">Bình Phước</option>
+                                <option value="Location_Binh Thuan">Bình Thuận</option>
+                                <option value="Location_Binh Đinh">Bình Định</option>
+                                <option value="Location_Ca Mau">Cà Mau</option>
+                                <option value="Location_Can Tho">Cần Thơ</option>
+                                <option value="Location_Cao Bang">Cao Bằng</option>
+                                <option value="Location_Champasak">Champasak</option>
+                                <option value="Location_Dak Lak">Đắk Lắk</option>
+                                <option value="Location_Dak Nong">Đắk Nông</option>
+                                <option value="Location_Gia Lai">Gia Lai</option>
+                                <option value="Location_Ha Giang">Hà Giang</option>
+                                <option value="Location_Ha Nam">Hà Nam</option>
+                                <option value="Location_Ha Noi">Hà Nội</option>
+                                <option value="Location_Ha Tinh">Hà Tĩnh</option>
+                                <option value="Location_Hai Duong">Hải Dương</option>
+                                <option value="Location_Hai Phong">Hải Phòng</option>
+                                <option value="Location_Hau Giang">Hậu Giang</option>
+                                <option value="Location_Ho Chi Minh">TP. Hồ Chí Minh</option>
+                                <option value="Location_Hoa Binh">Hòa Bình</option>
+                                <option value="Location_Hokkaido">Hokkaido</option>
+                                <option value="Location_Hung Yen">Hưng Yên</option>
+                                <option value="Location_Khanh Hoa">Khánh Hòa</option>
+                                <option value="Location_Kien Giang">Kiên Giang</option>
+                                <option value="Location_Kon Tum">Kon Tum</option>
+                                <option value="Location_Kratie">Kratie</option>
+                                <option value="Location_Kv Bac Trung Bo">Kv Bắc Trung Bộ</option>
+                                <option value="Location_Kv Nam Trung Bo">Kv Nam Trung Bộ</option>
+                                <option value="Location_Kv Tay Nguyen">Kv Tây Nguyên</option>
+                                <option value="Location_Kv Đong Nam Bo">Kv Đông Nam Bộ</option>
+                                <option value="Location_Lai Chau">Lai Châu</option>
+                                <option value="Location_Lam Đong">Lâm Đồng</option>
+                                <option value="Location_Lang Son">Lạng Sơn</option>
+                                <option value="Location_Lao Cai">Lào Cai</option>
+                                <option value="Location_Long An">Long An</option>
+                                <option value="Location_Malaysia">Malaysia</option>
+                                <option value="Location_Nghe An">Nghe An</option>
+                                <option value="Location_Ninh Binh">Ninh Bình</option>
+                                <option value="Location_Ninh Thuan">Ninh Thuận</option>
+                                <option value="Location_Not Specified">Không Xác Định</option>
+                                <option value="Location_Phnompenh">Phnompenh</option>
+                                <option value="Location_Phu Tho">Phú Thọ</option>
+                                <option value="Location_Phu Yen">Phú Yên</option>
+                                <option value="Location_Quang Binh">Quảng Bình</option>
+                                <option value="Location_Quang Nam">Quảng Nam</option>
+                                <option value="Location_Quang Ngai">Quảng Ngãi</option>
+                                <option value="Location_Quang Ninh">Quảng Ninh</option>
+                                <option value="Location_Quang Tri">Quảng Trị</option>
+                                <option value="Location_Soc Trang">Sóc Trăng</option>
+                                <option value="Location_Son La">Sơn La</option>
+                                <option value="Location_Svay Rieng">Svay Rieng</option>
+                                <option value="Location_Tay Ninh">Tây Ninh</option>
+                                <option value="Location_Thai Binh">Thái Bình</option>
+                                <option value="Location_Thai Nguyen">Thái Nguyên</option>
+                                <option value="Location_Thanh Hoa">Thanh Hóa</option>
+                                <option value="Location_Thua Thien- Hue">Thừa Thiên - Huế</option>
+                                <option value="Location_Tien Giang">Tiền Giang</option>
+                                <option value="Location_Toan Quoc">Toàn Quốc</option>
+                                <option value="Location_Tokyo">Tokyo</option>
+                                <option value="Location_Tra Vinh">Trà Vinh</option>
+                                <option value="Location_Tuyen Quang">Tuyên Quang</option>
+                                <option value="Location_Vinh Long">Vĩnh Long</option>
+                                <option value="Location_Vinh Phuc">Vĩnh Phúc</option>
+                                <option value="Location_Xiangkhouang">Xiangkhouang</option>
+                                <option value="Location_Yen Bai">Yên Bái</option>
+                                <option value="Location_Yokohama">Yokohama</option>
+                                <option value="Location_Đa Nang">Đà Nẵng</option>
+                                <option value="Location_Đien Bien">Điện Biên</option>
+                                <option value="Location_Đong Bang Song Cuu Long">Đồng Bang Song Cuu Long</option>
+                                <option value="Location_Đong Nai">Đồng Nai</option>
+                                <option value="Location_Đong Thap">Đồng Tháp</option>
+                            </select>
+                        </div>
+
+                        <!-- Language Requirement -->
+                        <div class="mb-3">
+                            <label for="language_requirement" class="form-label">Yêu Cầu Ngoại Ngữ:</label>
+                            <select id="language_requirement" name="language_requirement" class="form-select">
+                                <option value="0">Không</option>
+                                <option value="1">Có</option>
+                            </select>
+                        </div>
+
+                        <!-- Gender Requirement -->
+                        <div class="mb-4">
+                            <label for="gender_requirement" class="form-label">Yêu Cầu Giới Tính:</label>
+                            <select id="gender_requirement" name="gender_requirement" class="form-select">
+                                <option value="None">Không</option>
+                                <option value="Male">Nam</option>
+                                <option value="Female">Nữ</option>
+                                <option value="Both">Cả Nam & Nữ</option>
+                            </select>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary btn-lg">Dự Đoán</button>
+                        </div>
+                    </form>
+
+                    <!-- Display Prediction Result -->
+                    <div class="result-container">
+                        {% if result %}
+                            <h2>Kết Quả Dự Đoán:</h2>
+                            <div class="alert alert-success" role="alert">
+                                {{ result }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Display Prediction History -->
+        <div class="history-container mt-5">
+            <h2 class="mb-3 text-center">Lịch Sử Dự Đoán</h2>
+            
+            <!-- Nút Xóa Lịch Sử -->
+            <div class="d-flex justify-content-end mb-3">
+                <form action="/clear_history" method="POST" onsubmit="return confirmClearHistory();">
+                    <button type="submit" class="btn btn-danger">Xóa Lịch Sử Dự Đoán</button>
+                </form>
+            </div>
+            
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Kinh Nghiệm (Năm)</th>
+                        <th>Cấp Bậc</th>
+                        <th>Số Người Theo Dõi</th>
+                        <th>Trình Độ Học Vấn</th>
+                        <th>Loại Hình Làm Việc</th>
+                        <th>Ngành Nghề</th>
+                        <th>Phúc Lợi</th>
+                        <th>Địa Điểm</th>
+                        <th>Yêu Cầu Ngoại Ngữ</th>
+                        <th>Yêu Cầu Giới Tính</th>
+                        <th>Kết Quả</th>
+                        <th>Ngày Dự Đoán</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if history %}
+                        {% for entry in history %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ entry.experience }}</td>
+                                <td>{{ entry.job_level }}</td>
+                                <td>{{ entry.follower }}</td>
+                                <td>{{ entry.education_levels }}</td>
+                                <td>
+                                    {% set employment_types = [] %}
+                                    {% if entry.employment_type_internship %}
+                                        {% set employment_types = employment_types + ['Internship'] %}
+                                    {% endif %}
+                                    {% if entry.employment_type_part_time %}
+                                        {% set employment_types = employment_types + ['Part-time'] %}
+                                    {% endif %}
+                                    {% if entry.employment_type_official %}
+                                        {% set employment_types = employment_types + ['Official'] %}
+                                    {% endif %}
+                                    {% if entry.employment_type_freelance %}
+                                        {% set employment_types = employment_types + ['Freelance'] %}
+                                    {% endif %}
+                                    {{ employment_types | join(', ') }}
+                                </td>
+                                <td>{{ entry.industry }}</td>
+                                <td>{{ entry.welfare }}</td>
+                                <td>{{ entry.location }}</td>
+                                <td>{{ entry.language_requirement }}</td>
+                                <td>{{ entry.gender_requirement }}</td>
+                                <td>{{ "{:,.2f}".format(entry.result) }} VND</td>
+                                <td>{{ entry.date }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="13" class="text-center">Không có dữ liệu lịch sử dự đoán.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center">
+            <div class="container">
+                <p class="mb-0">&copy; 2024 Salary Predictor. All rights reserved.</p>
+                <p class="mb-0">Icon by <a href="https://www.flaticon.com/authors/smashicons" target="_blank" class="text-primary">Smashicons</a> from <a href="https://www.flaticon.com/" target="_blank" class="text-primary">Flaticon</a>.</p>
+            </div>
+        </footer>
+
+        <!-- Thêm script JavaScript để xác nhận xóa lịch sử -->
+        <script>
+            function confirmClearHistory() {
+                return confirm("Bạn có chắc chắn muốn xóa toàn bộ lịch sử dự đoán?");
+            }
+        </script>
+
+        <!-- Bootstrap JS và các phụ thuộc (Popper.js) -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
