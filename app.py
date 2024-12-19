@@ -20,7 +20,7 @@ HISTORY_FILE = 'prediction_history.json'
 lock = Lock()
 
 # Tải mô hình đã huấn luyện
-model_path = os.path.join(os.path.dirname(__file__), 'predict_salary_xgboost.pkl')
+model_path = os.path.join(os.path.dirname(__file__), 'predict_salary_random_forest.pkl')
 if not os.path.exists(model_path):
     raise FileNotFoundError(f"Model file not found at path: {model_path}")
 model = joblib.load(model_path)
@@ -118,9 +118,9 @@ def predict():
     try:
         # Lấy dữ liệu từ form
         experience = float(request.form.get('experience', 0))
-        job_level = int(request.form.get('job_level', 1))
+        job_level = int(request.form.get('job_level', 0))
         follower = int(request.form.get('follower', 0))
-        education_levels = int(request.form.get('education', 1))
+        education_levels = int(request.form.get('education', 0)) 
         employment_type = request.form.get('employment_type', 'None')
         selected_industries = request.form.getlist('industries')
         selected_welfares = request.form.getlist('welfares')
