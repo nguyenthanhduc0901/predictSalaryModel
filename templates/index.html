@@ -183,7 +183,7 @@
                         <div class="row mb-3">
                             <div class="col-md-3 mb-3 mb-md-0">
                                 <label for="experience" class="form-label">Kinh Nghiệm (Năm):</label>
-                                <input type="number" class="form-control" id="experience" name="experience" min="0" required>
+                                <input type="number" class="form-control" id="experience" name="experience" min="0" max="100" required>
                             </div>
                             <div class="col-md-3 mb-3 mb-md-0">
                                 <label for="follower" class="form-label">Số Lượng Người Theo Dõi:</label>
@@ -557,8 +557,8 @@
             // Tạo mảng lỗi
             const errors = [];
 
-            if (experience <= 0) {
-                errors.push("Kinh nghiệm phải là số nguyên dương.");
+            if (experience <= 0 || experience >= 100) {
+                errors.push("Kinh nghiệm phải là số nguyên dương và nhỏ hơn 100");
                 document.getElementById("experience").focus(); // Đặt con trỏ vào ô sai đầu tiên
             }  else if (follower <= 0) {
                 errors.push("Số lượng người theo dõi phải là số nguyên dương.");
